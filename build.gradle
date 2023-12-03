@@ -1,17 +1,41 @@
 plugins {
     id 'java'
+    id "io.spring.dependency-management" version "1.1.4"
+    id "org.springframework.boot" version "3.2.0"
 }
 
 group 'com.bolotov'
 version '1.0'
 
+java {
+    sourceCompatibility = '21'
+}
+
 repositories {
     mavenCentral()
 }
 
+//Spring
 dependencies {
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '3.2.0'
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa', version: '3.2.0'
+}
+
+//Lombok
+dependencies {
+    compileOnly group: 'org.projectlombok', name: 'lombok', version: '1.18.30'
+    testCompileOnly group: 'org.projectlombok', name: 'lombok', version: '1.18.30'
+    annotationProcessor group: 'org.projectlombok', name: 'lombok', version: '1.18.30'
+    testAnnotationProcessor group: 'org.projectlombok', name: 'lombok', version: '1.18.30'
+}
+
+//Other
+dependencies {
+    implementation group: 'org.postgresql', name: 'postgresql', version: '42.7.0'
+}
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.2'
 }
 
 test {
