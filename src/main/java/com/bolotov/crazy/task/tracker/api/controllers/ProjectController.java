@@ -1,5 +1,6 @@
 package com.bolotov.crazy.task.tracker.api.controllers;
 
+import com.bolotov.crazy.task.tracker.api.controllers.helpers.ControllerHelper;
 import com.bolotov.crazy.task.tracker.api.dto.AckDto;
 import com.bolotov.crazy.task.tracker.api.dto.ProjectDto;
 import com.bolotov.crazy.task.tracker.api.exceptions.BadRequestException;
@@ -26,6 +27,8 @@ public class ProjectController {
     ProjectRepository projectRepository;
 
     ProjectDtoFactory projectDtoFactory;
+
+    ControllerHelper controllerHelper;
 
     public static final String FETCH_PROJECTS = "/api/projects";
     public static final String CREATE_PROJECT = "/api/projects";
@@ -85,7 +88,7 @@ public class ProjectController {
         boolean isCreate = optionalProjectId.isEmpty();
 
         ProjectEntity projectEntity = optionalProjectId.
-                map(this::getProjectOrThrowException)
+                map(controllerHelper::getProjectOrThrowException)
                 .orElseGet(() -> ProjectEntity.builder().build());
 
         if (isCreate && optionalProjectName.isEmpty()) {
@@ -113,7 +116,7 @@ public class ProjectController {
     @PatchMapping(EDIT_PROJECT)
     public ProjectDto editProject(
             @PathVariable("project_id") Long projectId,
-            @RequestParam String projectName) {
+            @RequestParam("project_name") String projectName) {
 
         if (projectName.trim().isEmpty()) {
             throw new BadRequestException("Name can`t be empty.");
@@ -162,19 +165,5 @@ public class ProjectController {
         projectRepository.deleteById(projectId);
 
         return AckDto.makeDefault(true);
-    }
-
-    public ProjectEntity getProjectOrThrowException(Long projectId) {
-
-        return projectRepository
-                .findById(projectId)
-                .orElseThrow(() ->
-                        new NotFoundException(
-                                String.format(
-                                        "Project with \"%s\" doesn`t exists.",
-                                        projectId
-                                )
-                        )
-                );
     }
 }
