@@ -8,10 +8,13 @@ import com.bolotov.crazy.task.tracker.api.exceptions.NotFoundException;
 import com.bolotov.crazy.task.tracker.api.factories.ProjectDtoFactory;
 import com.bolotov.crazy.task.tracker.store.entities.ProjectEntity;
 import com.bolotov.crazy.task.tracker.store.repositories.ProjectRepository;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,6 +26,7 @@ import java.util.stream.Stream;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Transactional
 @RestController
+@Tag(name = "project")
 public class ProjectController {
     ProjectRepository projectRepository;
 
@@ -38,6 +42,8 @@ public class ProjectController {
     public static final String CREATE_OR_UPDATE_PROJECT = "/api/projects";
 
     @GetMapping(FETCH_PROJECTS)
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @Operation(summary = "Получение проектов с префиксом")
     public List<ProjectDto> fetchProjects(
             @RequestParam(value = "prefix_name", required = false) Optional<String> optionalPrefixName) {
 
@@ -58,6 +64,8 @@ public class ProjectController {
     }
 
     @PostMapping(CREATE_PROJECT)
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @Operation(summary = "Создание проекта")
     public ProjectDto createProject(@RequestParam("project_name") String projectName) {
         if (projectName.trim().isEmpty()) {
             throw new BadRequestException("Name can`t be empty.");
@@ -79,6 +87,8 @@ public class ProjectController {
     }
 
     @PutMapping(CREATE_OR_UPDATE_PROJECT)
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @Operation(summary = "Создание или обновление проекта")
     public ProjectDto createOrUpdateProject(
             @RequestParam(value = "project_id", required = false) Optional<Long> optionalProjectId,
             @RequestParam(value = "project_name", required = false) Optional<String> optionalProjectName) {
@@ -114,6 +124,8 @@ public class ProjectController {
 
 
     @PatchMapping(EDIT_PROJECT)
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @Operation(summary = "Изменение проекта")
     public ProjectDto editProject(
             @PathVariable("project_id") Long projectId,
             @RequestParam("project_name") String projectName) {
@@ -149,6 +161,8 @@ public class ProjectController {
     }
 
     @DeleteMapping(DELETE_PROJECT)
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @Operation(summary = "Удаление проекта")
     public AckDto deleteProject(@PathVariable("project_id") Long projectId) {
 
         projectRepository

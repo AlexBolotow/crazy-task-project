@@ -9,6 +9,8 @@ import com.bolotov.crazy.task.tracker.api.factories.TaskStateDtoFactory;
 import com.bolotov.crazy.task.tracker.store.entities.ProjectEntity;
 import com.bolotov.crazy.task.tracker.store.entities.TaskStateEntity;
 import com.bolotov.crazy.task.tracker.store.repositories.TaskStateRepository;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +24,7 @@ import java.util.Optional;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Transactional
 @RestController
+@Tag(name = "task state")
 public class TaskStateController {
 
     TaskStateRepository taskStateRepository;
@@ -37,6 +40,7 @@ public class TaskStateController {
     public static final String DELETE_TASK_STATE = "/api/task-states/{task_state_id}";
 
     @GetMapping(GET_TASK_STATES)
+    @Operation(summary = "Получение статусов задач")
     public List<TaskStateDto> getTaskStates(@PathVariable(name = "project_id") Long projectId) {
 
         ProjectEntity projectEntity = controllerHelper.getProjectOrThrowException(projectId);
@@ -49,6 +53,7 @@ public class TaskStateController {
     }
 
     @PostMapping(CREATE_TASK_STATE)
+    @Operation(summary = "Создание статуса задач")
     public TaskStateDto createTaskState(
             @PathVariable(name = "project_id") Long projectId,
             @RequestParam(value = "task_state_name") String taskStateName) {
@@ -97,6 +102,7 @@ public class TaskStateController {
     }
 
     @PatchMapping(UPDATE_TASK_STATE)
+    @Operation(summary = "Изменение статуса задач")
     public TaskStateDto updateTaskState(
             @PathVariable(name = "task_state_id") Long taskStateId,
             @RequestParam(name = "task_state_name") String taskStateName) {
@@ -126,6 +132,7 @@ public class TaskStateController {
 
 
     @PatchMapping(CHANGE_TASK_STATES_POSITION)
+    @Operation(summary = "Изменение позиции статуса задач")
     public TaskStateDto changeTaskStatePosition(
             @PathVariable(name = "task_state_id") Long taskStateId,
             @RequestParam(name = "left_task_state_id", required = false) Optional<Long> optionalLeftTaskStateId) {
@@ -209,6 +216,7 @@ public class TaskStateController {
     }
 
     @DeleteMapping(DELETE_TASK_STATE)
+    @Operation(summary = "Удаление статуса задач")
     public AckDto deleteTaskState(@PathVariable(name = "task_state_id") Long taskStateId) {
 
         TaskStateEntity changeTaskState = getTaskStateOrThrowException(taskStateId);
